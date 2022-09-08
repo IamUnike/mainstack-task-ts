@@ -208,7 +208,7 @@ const DashboardAnalytics = () => {
           className="my-4 shadow-sm border-[1px] border-[#EFF1F6] rounded-md px-8 py-2 font-medium text-gray-400 flex gap-2 items-center"
           onClick={() => setShowFilter(!showFilter)}
         >
-          Filters
+          {activeFilter}
           {showFilter ? <MdClose /> : <FiFilter />}
         </button>
         {showFilter && (
