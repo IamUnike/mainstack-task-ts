@@ -16,8 +16,8 @@ const TopBar = () => {
         <h3 className="text-xl font-bold text-[#131316]">{active || ""}</h3>
       </div>
       {showNav && (
-        <div className="fixed top-0 h-screen w-full bg-[#00000033] lg:hidden">
-          <div className="h-full bg-white  w-[320px] relative ease-in-out transition-all duration-500 ">
+        <div className="fixed top-0 h-screen w-full bg-[#00000033] lg:hidden z-[100] ">
+          <div className="h-full bg-white  w-[320px] relative ease-in-out transition-all duration-500  ">
             <div
               className="absolute right-8 top-8 cursor-pointer "
               onClick={() => setShowNav(false)}
