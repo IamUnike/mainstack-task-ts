@@ -1,5 +1,5 @@
-import { navLinks } from "data/navlinks";
 import { useNavContext } from "contexts/NavContext";
+import { navLinks } from "data/navlinks";
 import React from "react";
 
 const SideNav = () => {

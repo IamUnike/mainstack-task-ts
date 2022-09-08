@@ -1,4 +1,11 @@
-export const countries = [
+interface CountryType {
+  name: string;
+  code: string;
+}
+
+type CountriesType = CountryType[];
+
+const countries: CountriesType = [
   { name: "Afghanistan", code: "AF" },
   { name: "land Islands", code: "AX" },
   { name: "Albania", code: "AL" },
@@ -244,3 +251,5 @@ export const countries = [
   { name: "Zambia", code: "ZM" },
   { name: "Zimbabwe", code: "ZW" },
 ];
+
+export { countries };

@@ -6,7 +6,9 @@ const request = axios.create({
 });
 
 export const useGetAnalytics = () => {
-  return useQuery("analytics", () =>
-    request.get(`/`, { headers: {} }).then((res) => res)
+  return useQuery(
+    "analytics",
+    () => request.get(`/`, { headers: {} }).then((res) => res),
+    { refetchOnWindowFocus: false }
   );
 };

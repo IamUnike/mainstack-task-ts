@@ -10,7 +10,7 @@ import {
   MdAccessAlarm,
 } from "react-icons/md";
 
-export const navLinks = [
+const navLinks = [
   {
     name: "Dashboard",
     link: "/",
@@ -69,3 +69,5 @@ export const navLinks = [
     ],
   },
 ];
+
+export { navLinks };

@@ -6,47 +6,35 @@ import { FiFilter } from "react-icons/fi";
 import { MdClose } from "react-icons/md";
 import ReactCountryFlag from "react-country-flag";
 import { countries } from "data/countries";
-const data = [
-  {
-    type: "分类一",
-    value: 27,
-  },
-  {
-    type: "分类二",
-    value: 25,
-  },
-  {
-    type: "分类三",
-    value: 18,
-  },
-  {
-    type: "分类四",
-    value: 15,
-  },
-  {
-    type: "分类五",
-    value: 10,
-  },
-  {
-    type: "其他",
-    value: 5,
-  },
-];
+import { type } from "os";
 
 const colors10 = ["#599EEA", "#844FF6", "#F09468", "#FAB70A", "#0FB77A"];
 
-function useWindowSize() {
-  const [size, setSize] = useState([0, 0]);
-  useLayoutEffect(() => {
-    function updateSize() {
-      setSize([window.innerWidth, window.innerHeight]);
-    }
-    window.addEventListener("resize", updateSize);
-    updateSize();
-    return () => window.removeEventListener("resize", updateSize);
-  }, []);
-  return size;
+interface LocationType {
+  country: string;
+  color: string;
+  code: string;
+  percent: number;
+  count: number;
 }
+
+type LocationsType = LocationType[];
+interface BrandType {
+  source: string;
+  src: string;
+  color: string;
+  percent: number;
+  count: number;
+}
+
+type BrandsType = BrandType[];
+
+interface GraphData {
+  date: string;
+  value: number;
+}
+
+type GraphDataItems = GraphData[];
 
 const DashboardAnalytics = () => {
   const filters = [
@@ -58,23 +46,16 @@ const DashboardAnalytics = () => {
     "Custom Date",
   ];
 
-  interface DataItem {
-    scales: number;
-    Date: string;
-  }
-
-  interface DataItems extends Array<DataItem> {}
-
   const [activeFilter, setActiveFilter] = useState<String>("All Time");
-  const [analytics, setAnalytics] = useState();
-  const [showFilter, setShowFilter] = useState(false);
-  const [graphData, setGraphData] = useState([]);
-  const [locationAnalytics, setLocationAnalytics] = useState([]);
-  const [countryObjs, setCountryObjs] = useState([]);
-  const [brandObjs, setBrandObjs] = useState([]);
-  const [width, height] = useWindowSize();
+  const [showFilter, setShowFilter] = useState<boolean>(false);
+  const [graphData, setGraphData] = useState<GraphDataItems | []>([]);
+  const [locationAnalytics, setLocationAnalytics] = useState<
+    LocationsType | []
+  >([]);
+  const [countryObjs, setCountryObjs] = useState<LocationsType | []>([]);
+  const [brandObjs, setBrandObjs] = useState<BrandsType | []>([]);
 
-  const [brandAnalytics, setBrandAnalytics] = useState([]);
+  const [brandAnalytics, setBrandAnalytics] = useState<BrandsType | []>([]);
 
   const { data: dataResp } = useGetAnalytics();
 
@@ -156,7 +137,6 @@ const DashboardAnalytics = () => {
 
   useEffect(() => {
     if (!!dataResp && dataResp?.status === 200) {
-      setAnalytics(dataResp?.data);
       setLocationAnalytics(dataResp?.data?.top_locations);
       setBrandAnalytics(dataResp?.data?.top_sources);
 
@@ -175,7 +155,7 @@ const DashboardAnalytics = () => {
 
   useEffect(() => {
     if (!!locationAnalytics && locationAnalytics?.length > 0) {
-      let locations = [];
+      let locations: LocationsType = [];
       countries?.forEach((country) => {
         locationAnalytics?.forEach((item, i) => {
           if (item.country === country?.name) {
@@ -192,7 +172,7 @@ const DashboardAnalytics = () => {
     }
 
     if (!!brandAnalytics && brandAnalytics?.length > 0) {
-      let brands = [];
+      let brands: BrandsType = [];
 
       brandAnalytics?.forEach((item, i) => {
         const brand = {
@@ -317,6 +297,7 @@ const DashboardAnalytics = () => {
                 </div>
               ))}
           </div>
+          {/* @ts-ignore */}
           <Pie
             {...config}
             style={{ height: "200px" }}
@@ -353,6 +334,8 @@ const DashboardAnalytics = () => {
                 </div>
               ))}
           </div>
+
+          {/* @ts-ignore */}
           <Pie
             {...config}
             style={{ height: "200px" }}
