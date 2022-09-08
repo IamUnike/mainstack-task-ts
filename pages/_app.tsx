@@ -1,4 +1,8 @@
 import "/styles/globals.css";
+import "@fontsource/public-sans/400.css";
+import "@fontsource/public-sans/500.css";
+import "@fontsource/public-sans/600.css";
+import "@fontsource/public-sans/700.css";
 import type { AppProps } from "next/app";
 import NavProvider from "../contexts/NavContext";
 import MainLayout from "../layouts/MainLayout";

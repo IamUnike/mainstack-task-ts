@@ -22,7 +22,7 @@ const MainLayout = ({ children }: ChildrenProps) => {
             <div className="hidden lg:block h-[100vh] col-span-2">
               <SideNav />
             </div>
-            <div className="col-span-10 lg:col-span-8 min-h-screen">
+            <div className="col-span-10 lg:col-span-8 h-screen custom-scroll-wrapper">
               <TopBar />
               <div className="p-0">
                 <div>{children}</div>

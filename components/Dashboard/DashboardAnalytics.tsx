@@ -186,7 +186,7 @@ const DashboardAnalytics = () => {
     }
   }, [locationAnalytics, brandAnalytics, countries]);
   return (
-    <div>
+    <div className="pb-8">
       <div className="py-5 gap-3 hidden sm:flex">
         {filters?.map((filter) => (
           <div

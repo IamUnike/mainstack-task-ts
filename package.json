@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@ant-design/charts": "^1.4.2",
+    "@fontsource/plus-jakarta-sans": "^4.5.9",
+    "@fontsource/public-sans": "^4.5.10",
     "axios": "^0.27.2",
     "country-code-emoji": "^2.3.0",
     "next": "12.2.5",
