@@ -1,15 +1,15 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { VscInfo } from "react-icons/vsc";
-import { Line, Area, Pie, measureTextWidth } from "@ant-design/plots";
+import { Area, Pie } from "@ant-design/plots";
 import { useGetAnalytics } from "api/analytics";
 import { FiFilter } from "react-icons/fi";
 import { MdClose } from "react-icons/md";
 import ReactCountryFlag from "react-country-flag";
 import { countries } from "data/countries";
-import { type } from "os";
 
 const colors10 = ["#599EEA", "#844FF6", "#F09468", "#FAB70A", "#0FB77A"];
 
+//  ========== TYPES & INTERFACES =========
 interface LocationType {
   country: string;
   color: string;
@@ -36,17 +36,31 @@ interface GraphData {
 
 type GraphDataItems = GraphData[];
 
+interface FilterType {
+  text: string;
+  numberOfDays: number;
+}
+
+// ======== Helpers =======
+const sum = function (prop: GraphData[]) {
+  var total = 0;
+  for (var i = 0; i < prop.length; i++) {
+    total += prop[i]?.value;
+  }
+  return total;
+};
+
 const DashboardAnalytics = () => {
   const filters = [
-    "1 Day",
-    "3 Days",
-    "7 Days",
-    "30 Days",
-    "All Time",
-    "Custom Date",
+    { text: "1 Day", numberOfDays: 1 },
+    { text: "3 Days", numberOfDays: 3 },
+    { text: "7 Days", numberOfDays: 7 },
+    { text: "30 Days", numberOfDays: 30 },
+    { text: "All Time", numberOfDays: 10000000 },
+    { text: "Custom Date", numberOfDays: 1 },
   ];
 
-  const [activeFilter, setActiveFilter] = useState<String>("All Time");
+  const [activeFilter, setActiveFilter] = useState<FilterType>(filters[4]);
   const [showFilter, setShowFilter] = useState<boolean>(false);
   const [graphData, setGraphData] = useState<GraphDataItems | []>([]);
   const [locationAnalytics, setLocationAnalytics] = useState<
@@ -143,15 +157,28 @@ const DashboardAnalytics = () => {
       let graphData = dataResp?.data?.graph_data?.views;
       if (!!graphData && Object?.keys(graphData)?.length > 0) {
         graphData = Object.entries(graphData)?.map((item) => {
-          let date = `${new Date(item[0])}`;
-          date = date?.slice(3, 10);
-          return { date, value: item[1] };
+          return { date: item[0], value: item[1] };
         });
 
+        var today = new Date();
+        var startDate = new Date(
+          new Date().setDate(today.getDate() - activeFilter?.numberOfDays)
+        );
+        graphData = graphData?.filter((data: GraphData) => {
+          return new Date(data?.date) > startDate;
+        });
+
+        graphData = graphData?.map((item: GraphData) => {
+          let date = `${new Date(item?.date)}`;
+          date = date?.slice(4, 10);
+          return { ...item, date: date };
+        });
         setGraphData(graphData);
       }
     }
-  }, [dataResp]);
+  }, [dataResp, activeFilter]);
+
+  console.log("Data:", graphData);
 
   useEffect(() => {
     if (!!locationAnalytics && locationAnalytics?.length > 0) {
@@ -190,38 +217,40 @@ const DashboardAnalytics = () => {
       <div className="py-5 gap-3 hidden sm:flex">
         {filters?.map((filter) => (
           <div
-            key={filter}
+            key={filter?.text}
             onClick={() => setActiveFilter(filter)}
             className={`rounded-full border-[1px] border-[##EFF1F6] py-3 px-4 text-sm font-medium cursor-pointer ${
-              filter === activeFilter
+              filter?.text === activeFilter?.text
                 ? "text-primary bg-primaryTrans border-primary"
                 : "text-gray-500"
             }`}
           >
-            {filter}
+            {filter?.text}
           </div>
         ))}
       </div>
 
-      <div className="relative sm:hidden z-0 ">
+      <div className="relative sm:hidden z-10 ">
         <button
           className="my-4 shadow-sm border-[1px] border-[#EFF1F6] rounded-md px-8 py-2 font-medium text-gray-400 flex gap-2 items-center"
           onClick={() => setShowFilter(!showFilter)}
         >
-          {activeFilter}
+          {activeFilter?.text}
           {showFilter ? <MdClose /> : <FiFilter />}
         </button>
         {showFilter && (
           <div className="py-5 gap-3 absolute top-12 left-12 w-[220px]  bg-white z-10 px-6 border-[1px] border-[#EFF1F6] shadow-md">
             {filters?.map((filter) => (
               <div
-                key={filter}
+                key={filter?.text}
                 onClick={() => setActiveFilter(filter)}
                 className={`rounded-full py-2  text-sm font-medium cursor-pointer hover:text-primary ${
-                  filter === activeFilter ? "text-primary" : "text-gray-500"
+                  filter?.text === activeFilter?.text
+                    ? "text-primary"
+                    : "text-gray-500"
                 }`}
               >
-                {filter}
+                {filter?.text}
               </div>
             ))}
           </div>
@@ -234,13 +263,13 @@ const DashboardAnalytics = () => {
             <p className="font-bold text-gray-300 text-base md:text-lg">
               Page Views
             </p>
-            <p className="mt-2 text-gray-400 text-sm">{activeFilter}</p>
+            <p className="mt-2 text-gray-400 text-sm">{activeFilter?.text}</p>
           </div>
           <VscInfo className="text-base md:text-xl text-gray-400 cursor-pointer " />
         </div>
 
         <h3 className="font-bold text-2xl md:text-4xl lg:text-[48px] text-gray-300">
-          500
+          {sum(graphData)}
         </h3>
 
         <div className="overflow-x-auto">
@@ -337,7 +366,7 @@ const DashboardAnalytics = () => {
 
           {/* @ts-ignore */}
           <Pie
-            {...config}
+            {...config2}
             style={{ height: "200px" }}
             label={false}
             legend={false}
